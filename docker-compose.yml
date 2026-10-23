@@ -1,0 +1,27 @@
+services:
+  frontend:
+    build: .
+    ports:
+      - "8080:80"
+    networks:
+      - app-network
+
+  api:
+    image: containous/whoami
+    networks:
+      - app-network
+
+  logger:
+    image: busybox
+    command: ["sh", "-c", "while true; do date '+%Y-%m-%d %H:%M:%S' | xargs -I{} echo '{} [INFO] Service is running' >> /log/log.txt; sleep 5; done"]
+    volumes:
+      - logger-data:/log
+    networks:
+      - app-network
+
+volumes:
+  logger-data:
+
+networks:
+  app-network:
+    driver: bridge
